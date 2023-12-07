@@ -14,7 +14,7 @@ pub fn day_7() {
     //println!("{:?}", gms);
 
     gms.sort_by(|l,r| {
-        unsafe{get_hand_val(&l.0).cmp(&get_hand_val(&r.0))}
+        get_hand_val(&l.0).cmp(&get_hand_val(&r.0))
     });
 
     let mut i = 0;
