@@ -1,6 +1,6 @@
 use std::{fs::File, io::{BufReader, BufRead}};
 pub fn day_2() {
-    let file = File::open("input2_2023.txt").unwrap();
+    let file = File::open("input/input2_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let mut id = 1;
@@ -39,7 +39,7 @@ pub fn day_2() {
 // 2408 too low
 
 pub fn day_2_part2() {
-    let file = File::open("input2_2023.txt").unwrap();
+    let file = File::open("input/input2_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let mut res = 0;

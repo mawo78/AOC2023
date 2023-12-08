@@ -1,6 +1,6 @@
 use std::{fs::File, io::{BufReader, BufRead}, collections::HashMap};
 pub fn day_3_part1() {
-    let file = File::open("input3_2023.txt").unwrap();
+    let file = File::open("input/input3_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let mut dots:Vec<char> = Vec::new();
@@ -62,7 +62,7 @@ fn check_adj(tab: &Vec<Vec<char>>, y: usize, x: usize) -> bool {
 }
 
 pub fn day_3_part2() {
-    let file = File::open("input3_2023.txt").unwrap();
+    let file = File::open("input/input3_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let mut dots:Vec<char> = Vec::new();

@@ -1,7 +1,7 @@
 use std::{fs::File, io::{BufReader, BufRead}, collections::{HashSet, HashMap}};
 
 pub fn day_5_part1() {
-    let file = File::open("input5_2023.txt").unwrap();
+    let file = File::open("input/input5_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let mut res = i64::MAX;
@@ -58,10 +58,9 @@ pub fn day_5_part1() {
 }
 
 pub fn day_5_part2() {
-    let file = File::open("input5_2023.txt").unwrap();
+    let file = File::open("input/input5_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
-    let mut res = i64::MAX;
     let mut seeds:Vec<i64> = Vec::new();
     let mut seed_rng:Vec<(i64,i64)> = Vec::new();
     let mut maps:Vec<Vec<(i64,i64,i64)>> = Vec::new();

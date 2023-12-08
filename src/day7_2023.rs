@@ -2,7 +2,7 @@ use std::{fs::File, io::{BufReader, BufRead}, collections::HashMap};
 use once_cell::unsync::OnceCell;
 
 pub fn day_7() {
-    let file = File::open("input7_2023.txt").unwrap();
+    let file = File::open("input/input7_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let mut gms:Vec<(&str, i32)> = lines.iter().map(|ls| {

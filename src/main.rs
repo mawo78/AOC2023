@@ -1,3 +1,5 @@
+use crate::day5_2023::day_5_part1;
+
 pub mod day1_2023;
 pub mod day2_2023;
 pub mod day3_2023;

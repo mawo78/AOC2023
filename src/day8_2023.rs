@@ -1,7 +1,7 @@
 use std::{fs::File, io::{BufReader, BufRead}, collections::HashMap};
 
 pub fn day_8_part1() {
-    let file = File::open("input8_2023.txt").unwrap();
+    let file = File::open("input/input8_2023.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
     let way = &lines[0];
