@@ -1,4 +1,4 @@
-use std::{fs::File, io::{BufReader, BufRead}, collections::{HashSet, HashMap}};
+use std::{fs::File, io::{BufReader, BufRead}};
 
 pub fn day_5_part1() {
     let file = File::open("input/input5_2023.txt").unwrap();
