@@ -4,14 +4,16 @@ use lazy_static::lazy_static;
 use regex::Regex;
 
 pub fn day_12() {
+    let start = Instant::now();
     let file = File::open("input/input12_2023tst.txt").unwrap();
     let lines:Vec<String> = BufReader::new(file).lines().map(|l| l.unwrap()).collect();
 
-    let res:i32 = lines.iter().map(|ln| find_ways(ln)).sum();
+    let res:i64 = lines.iter().map(|ln| find_ways1(ln)).sum();
     println!("part1: {}", res);
-    let mut i = 1;
-    let res:i32 = lines.iter().map(|ln| {print!("{}", i); i+=1; find_ways2(ln)}).sum();
+    let res:i64 = lines.iter().map(|ln| find_ways2(ln)).sum();
     println!("part2: {}", res);
+    let duration = start.elapsed();
+    println!("Time elapsed in calculation is: {:?}", duration);
 }
 
 fn parse_line(ln:&String) -> (String, Vec<usize>){
@@ -53,8 +55,17 @@ fn find_ways(ln: &String) -> i32 {
     res
 }
 
-fn find_ways2(ln:&String) -> i32 {
-    let start = Instant::now();
+fn find_ways1(ln:&String) -> i64 {
+    let psd0 = parse_line(ln);
+    let grps = psd0.1;
+    let patr = psd0.0;
+
+    let mut cache:HashMap<String, i64> = HashMap::new();
+
+    req(&patr, &grps, &mut cache)
+}
+
+fn find_ways2(ln:&String) -> i64 {
     let mut res = 0;
     let psd0 = parse_line(ln);
     let grps = psd0.1.repeat(5);
@@ -64,11 +75,9 @@ fn find_ways2(ln:&String) -> i32 {
         patr.push_str(&psd0.0);    
     }
 
-    let mut cache:HashMap<String, i32> = HashMap::new();
+    let mut cache:HashMap<String, i64> = HashMap::new();
 
     res = req(&patr, &grps, &mut cache);
-    let duration = start.elapsed();
-    println!("Time elapsed in calculation is: {:?}", duration);
 
     res
 }
@@ -100,8 +109,14 @@ fn req2(grps: &Vec<usize>, patr: &String, cache: &mut HashMap<String, i32>) -> i
     res
 }
 
-fn req(patr: &String, grps: &Vec<usize>, cache:&HashMap<String, i32>) -> i32 {
+fn req(patr: &String, grps: &Vec<usize>, cache:&mut HashMap<String, i64>) -> i64 {
     //println!("[{}]   {:?}", patr, grps);
+    let mut hsh = patr.clone();
+    hsh.push_str(&format!("{:?}", &grps));
+    if cache.contains_key(&hsh) {
+        //print!("*");
+        return *cache.get(&hsh).unwrap();
+    }
     let mut res = 0;
 
     if grps.is_empty() {
@@ -115,9 +130,12 @@ fn req(patr: &String, grps: &Vec<usize>, cache:&HashMap<String, i32>) -> i32 {
     }
 
     let pom:Vec<char> = patr.chars().collect();
-
-    let mut p0 = 0;
-    while p0 < patr.len() && prefix_valid(&pom, p0){
+    let max_v_p0:i32 = patr.len() as i32 - grps.iter().sum::<usize>() as i32 - grps.len() as i32  + 1;
+    if max_v_p0 < 0 {
+        return 0;
+    }
+    let mut p0:usize = 0;
+    while p0 <= max_v_p0 as usize && prefix_valid(&pom, p0){
         if p0 + grps[0] <= patr.len() && valid_block(&pom, p0, grps[0]) {
             let mut grps_cl = grps.clone();
             grps_cl.remove(0);
@@ -130,6 +148,8 @@ fn req(patr: &String, grps: &Vec<usize>, cache:&HashMap<String, i32>) -> i32 {
         }
         p0 += 1;
     }
+
+    cache.insert(hsh, res);
 
     res
 }
@@ -201,14 +221,14 @@ fn test1(){
 
 #[test]
 fn test2(){
-    let mut cache:HashMap<String, i32> = HashMap::new();
+    let mut cache:HashMap<String, i64> = HashMap::new();
     let ln = "?###???????? 3,2,1".to_string();
     //let ln ="??#???????????#?? 1,1,2,4,4".to_string();
     let psd0 = parse_line(&ln);
     let grps = psd0.1.repeat(1);
     let patr = psd0.0.repeat(1);
    
-    let res = req(&patr, &grps, &cache);
+    let res = req(&patr, &grps, &mut cache);
     println!("{}", res);
 
     let ln ="??#???????????#?? 1,1,2,4,4".to_string();
@@ -216,6 +236,6 @@ fn test2(){
     let grps = psd0.1.repeat(1);
     let patr = psd0.0.repeat(1);
    
-    let res = req(&patr, &grps, &cache);
+    let res = req(&patr, &grps, &mut cache);
     println!("{}", res);
 }
