@@ -21,6 +21,7 @@ pub mod day20_2023;
 pub mod day21_2023;
 pub mod day22_2023;
 pub mod day23_2023;
+pub mod day24_2023;
 // pub mod day23_2016;
 // pub mod day12_2019;
 // pub mod day16_2016;
@@ -32,7 +33,7 @@ pub mod day23_2023;
 
 fn main() {
     println!("Hello, AOC! Now let's solve...");
-    day23_2023::day_23();
+    day24_2023::day_24();
     //day17_2023::day_17();
     //day18_2023::day_18_part1();
     //day18_2023::day_18_part2();
