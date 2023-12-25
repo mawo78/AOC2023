@@ -1,4 +1,4 @@
-use std::{fs::File, io::{BufReader, BufRead}, collections::HashMap};
+use std::{fs::File, io::{BufReader, BufRead}, collections::{HashMap, HashSet}};
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Line3d{
@@ -29,10 +29,9 @@ pub fn day_24() {
                 let p = crs.1;
                 if p.0 >= 200000000000000 && p.0 <= 400000000000000{
                     if p.1 >= 200000000000000 && p.1 <= 400000000000000{
-
-                        if (p.0 as i128 - ln.p0.0).signum() == ln.v.0.signum() {
+                        if (p.0 - ln.p0.0).signum() == ln.v.0.signum() {
                             //println!("{}", (p.0 - ln.p0.0 as f64) / ln.v.0 as f64);
-                            if (p.0 as i128 - ln2.p0.0).signum() == ln2.v.0.signum() {
+                            if (p.0 - ln2.p0.0).signum() == ln2.v.0.signum() {
                                 //println!("{}", (p.0 - ln2.p0.0 as f64) / ln2.v.0 as f64);
                                 // println!("{}", lines[i]);
                                 // println!("{}", lines[j]);
@@ -49,6 +48,58 @@ pub fn day_24() {
     };
 
     println!("Part 1: {}", res);
+
+    //part 2
+    let MAX_V = 400;
+    for i in 47..MAX_V {
+        println!("{}", i);
+        for j in -MAX_V..MAX_V {
+            for k in -MAX_V..MAX_V {
+                let V_R = (i,j,k);
+                let trnsl_l32:Vec<_> = lines3d.iter().take(5).map(|ln| {
+                    Line3d{ p0:ln.p0,
+                    v:  (ln.v.0 - i, ln.v.1 - j, ln.v.2 - j)}
+                }).collect();
+
+                let mut ile = 0;
+                let mut pnkts:HashSet<(i128,i128)> = HashSet::new();
+                for l in 0..trnsl_l32.len()-1 {
+                    let ln = trnsl_l32[l];
+                    for m in l + 1..trnsl_l32.len(){
+                        let ln2 = trnsl_l32[m];
+                        let crs = cross2d(&ln, &ln2);
+                        if crs.0 {
+                            pnkts.insert(crs.1);
+                            ile+=1;
+
+                            if pnkts.len() > 1 {
+                                break;
+                            }
+                        }                                                
+                    }
+                    if pnkts.len() > 1 {
+                        break;
+                    }
+                }
+                if pnkts.len() == 1 { //ile == pnkts.len() * (pnkts.len() - 1) / 2 {
+                    println!("{:?}, {}", V_R, ile);
+                }
+
+            }
+                
+        }
+    
+    }
+
+    // for i in 0.. lines3d.len() - 1{
+    //     let ln = &lines3d[i];
+    //     for j in i+1..lines3d.len(){
+    //         let ln2 = &lines3d[j];
+    //         if ln.v.0 == ln2.v.0 {
+    //             println!("{}", ln2.v.0);
+    //         }
+    //     }
+    // }
 
 }
 
