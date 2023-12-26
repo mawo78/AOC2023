@@ -1,4 +1,4 @@
-use std::{fs::File, io::{BufReader, BufRead}, collections::{HashSet, HashMap, VecDeque}, borrow::BorrowMut};
+use std::{fs::File, io::{BufReader, BufRead}, collections::{HashSet, HashMap, VecDeque}, borrow::BorrowMut, time::Instant, process::exit};
 
 pub fn day_25() {
     let file = File::open("input/input25_2023.txt").unwrap();
@@ -60,20 +60,22 @@ pub fn day_25() {
     // graf.iter().for_each(|k| {println!("{:?} {}", k, k.len())});
     // println!("{:?}", &graf);
 
-    for i in 0..300 {
+    for i in 0..200 {
+        let start = Instant::now();
         println!("{}", i);
         let edge = tsort[i].0;
         remove_edge_id(&mut graf, &edge.0, &edge.1);
-        for j in i+1..301 {
+        for j in i+1..201 {
             let edge2 = tsort[j].0;
             remove_edge_id(&mut graf, &edge2.0, &edge2.1);
-            for k in j+1..302 {
+            for k in j+1..202 {
                 let edge3 = tsort[k].0;
                 remove_edge_id(&mut graf, &edge3.0, &edge3.1);
                 
                 let ctd:Vec<i32> = find_ctd(&graf); 
                 if ctd.len() == 2 {
                     println!("{:?} {}", ctd, ctd[0]*ctd[1]);
+                    exit(0);
                 }
 
                 make_edge_id(&mut graf, &edge3.0, &edge3.1);
@@ -81,6 +83,8 @@ pub fn day_25() {
             make_edge_id(&mut graf, &edge2.0, &edge2.1);
         }
         make_edge_id(&mut graf, &edge.0, &edge.1);
+        let duration = start.elapsed();
+        println!("Time elapsed in calculation is: {:?}", duration);
     }
 
 }

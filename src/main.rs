@@ -33,7 +33,7 @@ pub mod day25_2023;
 // pub mod day14_2018;
 
 fn main() {
-    day25_2023::day_25();
+    day24_2023::day_24();
     //day17_2023::day_17();
     //day18_2023::day_18_part1();
     //day18_2023::day_18_part2();

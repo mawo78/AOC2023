@@ -1,4 +1,4 @@
-use std::{fs::File, io::{BufReader, BufRead}, collections::{HashMap, HashSet}};
+use std::{fs::File, io::{BufReader, BufRead}, collections::{HashMap, HashSet}, time::Instant};
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Line3d{
@@ -50,46 +50,16 @@ pub fn day_24() {
     println!("Part 1: {}", res);
 
     //part 2
-    let MAX_V = 400;
-    for i in 47..MAX_V {
-        println!("{}", i);
-        for j in -MAX_V..MAX_V {
-            for k in -MAX_V..MAX_V {
-                let V_R = (i,j,k);
-                let trnsl_l32:Vec<_> = lines3d.iter().take(5).map(|ln| {
-                    Line3d{ p0:ln.p0,
-                    v:  (ln.v.0 - i, ln.v.1 - j, ln.v.2 - j)}
-                }).collect();
+    let res_x_y = find_start_point(&lines3d);
 
-                let mut ile = 0;
-                let mut pnkts:HashSet<(i128,i128)> = HashSet::new();
-                for l in 0..trnsl_l32.len()-1 {
-                    let ln = trnsl_l32[l];
-                    for m in l + 1..trnsl_l32.len(){
-                        let ln2 = trnsl_l32[m];
-                        let crs = cross2d(&ln, &ln2);
-                        if crs.0 {
-                            pnkts.insert(crs.1);
-                            ile+=1;
+    let lines32z:Vec<Line3d> = lines3d.iter().map(|p|{ Line3d{
+        p0: (p.p0.0, p.p0.2, p.p0.1),
+        v: (p.v.0, p.v.2, p.v.1)
+    }}).collect();
 
-                            if pnkts.len() > 1 {
-                                break;
-                            }
-                        }                                                
-                    }
-                    if pnkts.len() > 1 {
-                        break;
-                    }
-                }
-                if pnkts.len() == 1 { //ile == pnkts.len() * (pnkts.len() - 1) / 2 {
-                    println!("{:?}, {}", V_R, ile);
-                }
+    let res_x_z = find_start_point(&lines32z);
 
-            }
-                
-        }
-    
-    }
+    println!("{}", res_x_y.1.0 + res_x_y.1.1 + res_x_z.1.1);
 
     // for i in 0.. lines3d.len() - 1{
     //     let ln = &lines3d[i];
@@ -101,6 +71,55 @@ pub fn day_24() {
     //     }
     // }
 
+}
+
+const MAX_V:i128 = 400;
+
+fn find_start_point(lines3d: &Vec<Line3d>) -> ((i128,i128,i128), (i128,i128)){
+    let start = Instant::now();
+    let mut done = false;
+    for i in -MAX_V..MAX_V {
+        println!("{}", i);
+        for j in -MAX_V..MAX_V {
+            for k in -MAX_V..MAX_V {
+                let v_r = (i,j,k);
+                let trnsl_l32:Vec<_> = lines3d.iter().take(4).map(|ln| {
+                    Line3d{ p0:ln.p0,
+                    v:  (ln.v.0 - i, ln.v.1 - j, ln.v.2 - j)}
+                }).collect();
+
+                let mut ile = 0;
+                let mut pnkts:HashSet<(i128,i128)> = HashSet::new();
+                for l in 0..trnsl_l32.len()-1 {
+                    let ln = trnsl_l32[l];
+                    for m in l + 1..trnsl_l32.len(){
+                        let ln2 = trnsl_l32[m];
+                        let crs = cross2d(&ln, &ln2);
+                        pnkts.insert(crs.1);
+                        ile+=1;
+
+                        if pnkts.len() > 1 {
+                            break;
+                        }
+                    }
+                    if pnkts.len() > 1 {
+                        break;
+                    }
+                }
+                if pnkts.len() == 1 { //ile == pnkts.len() * (pnkts.len() - 1) / 2 {                    
+                    println!("{:?}, {} {:?}", v_r, ile, pnkts.iter().collect::<Vec<&(i128,i128)>>()[0]);
+                    done = true;
+                    let duration = start.elapsed();
+                    println!("Time elapsed in calculation is: {:?}", duration);
+                    return (v_r, *pnkts.iter().collect::<Vec<&(i128,i128)>>()[0]);
+                }
+                if done {break;}
+            }
+            if done {break;}                
+        }
+        if done {break;}    
+    }
+    ((0_i128,0,0), (0,0))
 }
 
 fn cross2d(lin1: &Line3d, lin2: &Line3d) -> (bool, (i128, i128)) {
