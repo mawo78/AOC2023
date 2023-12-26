@@ -1,4 +1,4 @@
-use std::{fs::File, io::{BufReader, BufRead}, collections::{HashMap, HashSet}, time::Instant};
+use std::{fs::File, io::{BufReader, BufRead}, collections::HashSet, time::Instant};
 
 #[derive(Debug, Clone, Copy, Default)]
 struct Line3d{
@@ -61,27 +61,16 @@ pub fn day_24() {
 
     println!("{}", res_x_y.1.0 + res_x_y.1.1 + res_x_z.1.1);
 
-    // for i in 0.. lines3d.len() - 1{
-    //     let ln = &lines3d[i];
-    //     for j in i+1..lines3d.len(){
-    //         let ln2 = &lines3d[j];
-    //         if ln.v.0 == ln2.v.0 {
-    //             println!("{}", ln2.v.0);
-    //         }
-    //     }
-    // }
-
 }
 
-const MAX_V:i128 = 400;
+const MAX_V:i128 = 500;
 
 fn find_start_point(lines3d: &Vec<Line3d>) -> ((i128,i128,i128), (i128,i128)){
     let start = Instant::now();
-    let mut done = false;
     for i in -MAX_V..MAX_V {
-        println!("{}", i);
+        //println!("{}", i);
         for j in -MAX_V..MAX_V {
-            for k in -MAX_V..MAX_V {
+                let k = 0;
                 let v_r = (i,j,k);
                 let trnsl_l32:Vec<_> = lines3d.iter().take(4).map(|ln| {
                     Line3d{ p0:ln.p0,
@@ -108,16 +97,11 @@ fn find_start_point(lines3d: &Vec<Line3d>) -> ((i128,i128,i128), (i128,i128)){
                 }
                 if pnkts.len() == 1 { //ile == pnkts.len() * (pnkts.len() - 1) / 2 {                    
                     println!("{:?}, {} {:?}", v_r, ile, pnkts.iter().collect::<Vec<&(i128,i128)>>()[0]);
-                    done = true;
                     let duration = start.elapsed();
                     println!("Time elapsed in calculation is: {:?}", duration);
                     return (v_r, *pnkts.iter().collect::<Vec<&(i128,i128)>>()[0]);
                 }
-                if done {break;}
-            }
-            if done {break;}                
         }
-        if done {break;}    
     }
     ((0_i128,0,0), (0,0))
 }
