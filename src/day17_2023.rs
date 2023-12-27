@@ -1,6 +1,4 @@
-use std::{fs::File, io::{BufReader, BufRead}, collections::{HashSet, HashMap}};
-use colored::*;
-type NodeTypeA = ((i32, i32), (char, char, char));
+use std::{fs::File, io::{BufReader, BufRead}, collections::HashSet};
 
 pub fn day_17() {
     let file = File::open("input/input17_2023.txt").unwrap();
@@ -20,12 +18,13 @@ pub fn day_17() {
     let endypos = map.len() as i32 - 2;
     let endxpos = map[0].len() as i32 - 2;
 
-    println!("Part 1: {}", find_way(&map, (1,1), (endypos,endxpos)));
+    println!("Part 1: {}", find_way(&map, (1,1), (endypos,endxpos), 1, 3));
+    println!("Part 2: {}", find_way(&map, (1,1), (endypos,endxpos), 4, 10));
 }
 
 type NodeType = (i32,i32,(i32, i32),char);
 
-fn find_way(map:&Vec<Vec<char>>, pos: (i32, i32), dest: (i32, i32)) -> i32 {
+fn find_way(map:&Vec<Vec<char>>, pos: (i32, i32), dest: (i32, i32), minstep:i32, maxstep:i32) -> i32 {
     let mut res = 0;
     let mut todo:Vec<NodeType> = Vec::new();
     todo.push((0, 0, pos, 'R'));
@@ -64,13 +63,15 @@ fn find_way(map:&Vec<Vec<char>>, pos: (i32, i32), dest: (i32, i32)) -> i32 {
 
         for d in sides{
             let mut pos = (min_el.2, d.1).clone();
-            for i in 1..=3 {
+            for i in 1..=maxstep {
                 pos.0.0 += d.0.0;
                 pos.0.1 += d.0.1;
                 if is_inside(&map, pos.0){
-                    let h = heat_range(&map,&min_el.2, i, &d.0);
-                    todo.push(( min_el.0 + h, x, pos.0, pos.1 ));
-                    x += 1;
+                    if i >= minstep {
+                        let h = heat_range(&map,&min_el.2, i, &d.0);
+                        todo.push(( min_el.0 + h, x, pos.0, pos.1 ));
+                        x += 1;    
+                    }
                 }
             }
         }
